@@ -7,3 +7,11 @@ export interface Comment {
     userId: number;
     taskId: number;
 }
+
+export interface CreateCommentDto {
+    content: string;
+}
+
+export interface UpdateCommentDto {
+    content?: string;
+}

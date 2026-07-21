@@ -6,3 +6,13 @@ export interface Workspace{
     updatedAt: string;
     deletedAt: string | null;
 }
+
+export interface CreateWorkspaceDto {
+    name: string;
+    description?: string;
+}
+
+export interface UpdateWorkspaceDto {
+    name?: string;
+    description?: string;
+}

@@ -6,3 +6,12 @@ export interface Membership {
     userId: number;
     workspaceId: number;
 }
+
+export interface InviteMemberDto {
+    email: string;
+    role: WorkspaceRole;
+}
+
+export interface UpdateMemberRoleDto {
+    role: WorkspaceRole;
+}

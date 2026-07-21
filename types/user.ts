@@ -9,3 +9,9 @@ export interface User{
     updatedAt: string;
     deletedAt: string | null;
 }
+
+export interface UpdateUserDto {
+    fullName?: string;
+    email?: string;
+    password?: string;
+}
