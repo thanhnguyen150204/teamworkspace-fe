@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { User } from '@/types/user';
 import { usersApi } from '@/lib/api/users';
+import { setCookie, deleteCookie } from '@/lib/cookies';
 
 interface AuthState {
   user: User | null;
@@ -20,11 +21,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuth: (user, token, refreshToken) => {
     localStorage.setItem('access_token', token);
     localStorage.setItem('refresh_token', refreshToken);
+    setCookie('access_token', token);
     set({ user, accessToken: token, isAuthenticated: true, isLoading: false });
   },
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    deleteCookie('access_token');
     set({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
   },
   fetchMe: async () => {
@@ -34,7 +37,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ user: null, isAuthenticated: false, isLoading: false });
-      localStorage.removeItem ('access_token');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      deleteCookie('access_token');
     }
   },
 }));

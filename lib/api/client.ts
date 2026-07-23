@@ -1,4 +1,5 @@
 import axios from "axios";
+import { setCookie, deleteCookie } from "@/lib/cookies";
 
 const apiClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -55,7 +56,8 @@ apiClient.interceptors.response.use(
         if (!refreshToken) {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
-            window.location.href = "/login";
+            deleteCookie("access_token");
+            window.location.href = "/auth/login";
             return Promise.reject(error);
         }
 
@@ -67,6 +69,7 @@ apiClient.interceptors.response.use(
 
             const newAccessToken = response.data.data.access_token;
             localStorage.setItem("access_token", newAccessToken);
+            setCookie("access_token", newAccessToken);
             processQueue(null, newAccessToken);
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -75,7 +78,8 @@ apiClient.interceptors.response.use(
             processQueue(refreshError, null);
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
-            window.location.href = "/login";
+            deleteCookie("access_token");
+            window.location.href = "/auth/login";
 
             return Promise.reject(refreshError);
         } finally {

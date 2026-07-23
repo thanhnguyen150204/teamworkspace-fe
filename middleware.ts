@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function middlware(request: NextRequest){
+export default function middleware(request: NextRequest){
     const {pathname} = request.nextUrl;
     const token = request.cookies.get('access_token')?.value;
     const isAuthPage = pathname.startsWith('/auth');
