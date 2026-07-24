@@ -1,11 +1,12 @@
 'use client'
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
-import { LogOut, GalleryVerticalEnd } from "lucide-react";
+import { LogOut, GalleryVerticalEnd, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
 export default function DashboardLayout({
   children,
@@ -46,6 +47,22 @@ export default function DashboardLayout({
             Team Workspace
           </span>
         </div>
+
+        <InputGroup className="w-full max-w-md h-9 bg-slate-100/80 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all shadow-none">
+          <InputGroupAddon align="inline-start" className="pl-3 text-slate-400 dark:text-slate-500">
+            <Search className="size-4" />
+          </InputGroupAddon>
+          <InputGroupInput 
+            type="text" 
+            placeholder="Tìm kiếm dự án, công việc, thành viên..." 
+            className="h-full text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-slate-100" 
+          />
+          <InputGroupAddon align="inline-end" className="pr-2.5">
+            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-1.5 font-mono text-[10px] font-medium text-slate-400 dark:text-slate-500 shadow-xs">
+              <span className="text-[11px]">⌘</span>K
+            </kbd>
+          </InputGroupAddon>
+        </InputGroup>
 
         <div className="flex items-center gap-4">
           {user && (

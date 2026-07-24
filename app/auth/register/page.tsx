@@ -28,7 +28,7 @@ export default function SignupPage() {
           </div>
         </div>
         <div className="text-xs text-center md:text-left text-slate-400 relative z-10">
-          © {new Date().getFullYear()} Acme Inc. All rights reserved.
+          © {new Date().getFullYear()} Website was developed by Nguyen Thanh.
         </div>
       </div>
       <div className="relative hidden bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 lg:block overflow-hidden">
