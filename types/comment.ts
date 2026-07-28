@@ -1,3 +1,8 @@
+export interface CommentUser {
+    id: number;
+    fullName: string;
+    avatar: string | null;
+}
 export interface Comment {
     id: number;
     content: string;
@@ -6,6 +11,7 @@ export interface Comment {
     deletedAt: string | null;
     userId: number;
     taskId: number;
+    user?: CommentUser;
 }
 
 export interface CreateCommentDto {

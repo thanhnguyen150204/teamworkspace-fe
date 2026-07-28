@@ -30,7 +30,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
 import { authApi } from "@/lib/api/auth"
 import { toast } from "sonner"

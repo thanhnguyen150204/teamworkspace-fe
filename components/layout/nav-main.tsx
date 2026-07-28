@@ -18,8 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { useRouter } from "next/router"
-import { usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 export function NavMain({
   items,
@@ -42,7 +41,9 @@ export function NavMain({
       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
+          const isActive = item.url === "/dashboard"
+            ? pathname === "/dashboard"
+            : (pathname === item.url || pathname.startsWith(item.url + '/'))
           return(
           <Collapsible key={item.title} defaultOpen={item.isActive || isActive}>
             <SidebarMenuItem>
