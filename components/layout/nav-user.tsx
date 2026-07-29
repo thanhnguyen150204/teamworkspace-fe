@@ -70,19 +70,19 @@ export function NavUser({
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="text-white hover:bg-white/10 hover:text-white data-[state=open]:bg-white/20 data-[state=open]:text-white"
               />
             }
           >
-            <Avatar className="h-8 w-8 rounded-lg">
+            <Avatar className="h-8 w-8 rounded-lg border border-white/30">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-xs font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="rounded-lg bg-white/20 text-white text-xs font-bold">{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
-              <span className="truncate text-xs">{user.email}</span>
+              <span className="truncate font-bold text-white">{user.name}</span>
+              <span className="truncate text-xs text-cyan-200/90">{user.email}</span>
             </div>
-            <ChevronsUpDown className="ml-auto size-4" />
+            <ChevronsUpDown className="ml-auto size-4 text-cyan-200" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"

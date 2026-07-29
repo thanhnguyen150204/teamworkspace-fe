@@ -115,10 +115,10 @@ export function CreateTaskDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={TaskStatus.TODO}>To Do</SelectItem>
-                  <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
-                  <SelectItem value={TaskStatus.REVIEW}>Review</SelectItem>
-                  <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
+                  <SelectItem value={TaskStatus.TODO}>TODO</SelectItem>
+                  <SelectItem value={TaskStatus.IN_PROGRESS}>IN PROGRESS</SelectItem>
+                  <SelectItem value={TaskStatus.REVIEW}>REVIEW</SelectItem>
+                  <SelectItem value={TaskStatus.DONE}>DONE</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -132,9 +132,9 @@ export function CreateTaskDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={TaskPriority.LOW}>🟢 Low</SelectItem>
-                  <SelectItem value={TaskPriority.MEDIUM}>🟡 Medium</SelectItem>
-                  <SelectItem value={TaskPriority.HIGH}>🔴 High</SelectItem>
+                  <SelectItem value={TaskPriority.LOW}>🟢 LOW</SelectItem>
+                  <SelectItem value={TaskPriority.MEDIUM}>🟡 MEDIUM</SelectItem>
+                  <SelectItem value={TaskPriority.HIGH}>🔴 HIGH</SelectItem>
                 </SelectContent>
               </Select>
             </div>

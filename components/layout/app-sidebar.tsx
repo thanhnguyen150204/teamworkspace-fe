@@ -41,7 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   React.useEffect(() => {
     fetchWorkspaces()
-  }, [fetchWorkspaces])
+  }, [])
 
   React.useEffect(() => {
     if (params?.workspaceId && workspaces.length > 0) {
@@ -111,32 +111,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     avatar: "",
   }
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+    <Sidebar
+      variant="sidebar"
+      className="[&_[data-sidebar=sidebar]]:!bg-gradient-to-b [&_[data-sidebar=sidebar]]:!from-teal-800 [&_[data-sidebar=sidebar]]:!via-cyan-900 [&_[data-sidebar=sidebar]]:!to-teal-950 [&_[data-sidebar=sidebar]]:!text-white border-r border-teal-700/40"
+      {...props}
+    >
+      <SidebarHeader className="border-b border-teal-700/40 pb-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" onClick={() => router.push('/dashboard')}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-tr from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20">
+            <SidebarMenuButton size="lg" onClick={() => router.push('/dashboard')} className="text-white hover:bg-white/10 hover:text-white cursor-pointer">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white/20 text-white shadow-xs backdrop-blur-md border border-white/20">
                 <Building2 className="size-4"/>
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
+                <span className="truncate font-bold text-white">
                   {activeWorkspace?.name || "Select Workspace"}
                 </span>
-                <span className="truncate text-xs text-muted-foreground">
+                <span className="truncate text-xs text-cyan-200/90">
                   {activeWorkspace?.description || "Team Workspace"}
                 </span>
               </div>
-              <ChevronDown className="ml-auto size-4 text-muted-foreground" />
+              <ChevronDown className="ml-auto size-4 text-cyan-200" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="text-cyan-100">
         <NavMain items={navMain} />
-        <NavSecondary items={navSecondary} className="mt-auto" />
+        <NavSecondary items={navSecondary} className="mt-auto text-cyan-200/90" />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-teal-700/40">
         <NavUser user={userData} />
       </SidebarFooter>
     </Sidebar>
