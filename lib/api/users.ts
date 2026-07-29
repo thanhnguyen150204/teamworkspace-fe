@@ -5,6 +5,7 @@ export const usersApi = {
     getMe: () => client.get<any, User>('/users/me'),
     getAll: () => client.get<any, User[]>('/users'),
     getOne: (id: number) => client.get<any, User>(`/users/${id}`),
+    create: (data: { fullName: string; email: string; password?: string }) => client.post<any, User>('/users', data),
     update: (id: number, data: UpdateUserDto) => client.patch<any, User>(`/users/${id}`, data),
     updateAvatar: (file: File) => {
         const formData = new FormData();

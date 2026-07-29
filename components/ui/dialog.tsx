@@ -32,6 +32,10 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   )
 }
 
+export function DialogContent({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn(className)} {...props}>{children}</div>
+}
+
 export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex flex-col space-y-1.5 text-left mb-4", className)} {...props} />
 }

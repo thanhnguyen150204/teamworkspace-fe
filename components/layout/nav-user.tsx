@@ -74,9 +74,9 @@ export function NavUser({
               />
             }
           >
-            <Avatar className="h-8 w-8 rounded-lg border border-white/30">
+            <Avatar className="h-8 w-8 rounded-full border border-white/30 overflow-hidden">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg bg-white/20 text-white text-xs font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-white/20 text-white text-xs font-bold">{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-bold text-white">{user.name}</span>
@@ -91,10 +91,10 @@ export function NavUser({
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+              <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
+                <Avatar className="h-8 w-8 rounded-full overflow-hidden">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-xs font-bold">
+                  <AvatarFallback className="bg-gradient-to-br from-teal-600 to-cyan-600 text-white text-xs font-bold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -106,25 +106,21 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/settings')}>
-                <BadgeCheck/>
+              <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer">
+                <BadgeCheck className="mr-2 size-4" />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/settings")}>
-                <Settings/>
+              <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer">
+                <Settings className="mr-2 size-4" />
                 Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell/>
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
+                <LogOut />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
