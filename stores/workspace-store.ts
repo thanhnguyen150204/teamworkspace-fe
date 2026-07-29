@@ -13,14 +13,14 @@ interface WorkspaceState {
     activeProject: Project | null;
     isLoading: boolean;
     myRole: WorkspaceRole | null;
-    fetchWorkspaces: () => Promise<void>;
+    loadedProjectsWorkspaceId: number | null;
+    loadedRoleWorkspaceId: number | null;
+    fetchWorkspaces: (force?: boolean) => Promise<void>;
     setActiveWorkspace: (workspace: Workspace) => Promise<void>;
-    fetchProjects: (workspaceId: number) => Promise<void>;
+    fetchProjects: (workspaceId: number, force?: boolean) => Promise<void>;
     setActiveProject: (project: Project | null) => void;
-    fetchMyRole: (workspaceId: number) => Promise<void>;
+    fetchMyRole: (workspaceId: number, force?: boolean) => Promise<void>;
 }
-
-
 
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     workspaces: [],
@@ -29,53 +29,71 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     activeProject: null,
     isLoading: false,
     myRole: null,
-    fetchWorkspaces: async () => {
+    loadedProjectsWorkspaceId: null,
+    loadedRoleWorkspaceId: null,
+    
+    fetchWorkspaces: async (force = false) => {
+        if (!force && get().workspaces.length > 0) {
+            return;
+        }
         set({ isLoading: true });
         try {
             const data = await workspaceApi.getAll();
             set({ workspaces: data, isLoading: false });
             if (data.length > 0 && !get().activeWorkspace) {
-                get().setActiveWorkspace(data[0]);
+                await get().setActiveWorkspace(data[0]);
             }
         } catch {
             set({ isLoading: false });
         }
     },
     setActiveWorkspace: async (workspace) => {
-        set({ activeWorkspace: workspace, activeProject: null });
+        const currentActive = get().activeWorkspace;
+        if (currentActive?.id !== workspace.id) {
+            set({ activeWorkspace: workspace, activeProject: null });
+        }
         await Promise.all([ 
-        get().fetchProjects(workspace.id),
-        get().fetchMyRole(workspace.id),
+            get().fetchProjects(workspace.id),
+            get().fetchMyRole(workspace.id),
         ]);
     },
 
-    fetchProjects: async (workspaceId) => {
+    fetchProjects: async (workspaceId, force = false) => {
+        if (!force && get().loadedProjectsWorkspaceId === workspaceId && get().projects.length > 0) {
+            return;
+        }
         try {
             const projects = await projectApi.getAll(workspaceId);
-            set({ projects });
+            set({ projects, loadedProjectsWorkspaceId: workspaceId });
         } catch {
-            set({ projects: [] });
+            set({ projects: [], loadedProjectsWorkspaceId: null });
         }
     },
     setActiveProject: (project) => {
         set({ activeProject: project });
     },
 
-    fetchMyRole: async (workspaceId) => {
-        try{
+    fetchMyRole: async (workspaceId, force = false) => {
+        if (!force && get().loadedRoleWorkspaceId === workspaceId && get().myRole !== null) {
+            return;
+        }
+        try {
             const members = await memberApi.getAll(workspaceId) as any[];
             const user = useAuthStore.getState().user;
             if(!user){
-                set({ myRole: null});
+                set({ myRole: null, loadedRoleWorkspaceId: null });
                 return;
             }
             const myMembership = members.find(
                 (m: any) => m.userId === user.id
             );
-            set({ myRole : (myMembership?.role as WorkspaceRole)|| null});
+            set({ 
+                myRole: (myMembership?.role as WorkspaceRole) || null,
+                loadedRoleWorkspaceId: workspaceId,
+            });
 
-        } catch{
-            set({ myRole : null});
+        } catch {
+            set({ myRole: null, loadedRoleWorkspaceId: null });
         }
     },
 

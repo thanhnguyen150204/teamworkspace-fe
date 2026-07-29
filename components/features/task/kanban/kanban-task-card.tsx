@@ -8,16 +8,16 @@ interface KanbanTaskCardProps {
 
 const PRIORITY_CONFIG: Record<TaskPriority, { label: string; className: string }> = {
     [TaskPriority.LOW]: {
-        label: "Low",
-        className: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400",
+        label: "LOW",
+        className: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60 font-semibold",
     },
     [TaskPriority.MEDIUM]: {
-        label: "Medium",
-        className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400",
+        label: "MEDIUM",
+        className: "bg-amber-50 text-amber-700 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 font-semibold",
     },
     [TaskPriority.HIGH]: {
-        label: "High",
-        className: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400",
+        label: "HIGH",
+        className: "bg-rose-50 text-rose-700 dark:bg-rose-950/70 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800/60 font-bold",
     },
 }
 
@@ -26,7 +26,8 @@ export function KanbanTaskCard({ task }: KanbanTaskCardProps) {
     const params = useParams()
 
     const handleClick = () => {
-        router.push(`dashboard/workspace/${params.workspaceId}/project/${task.projectId}/tasks/${task.id}`)
+        const projectId = task.projectId || params.projectId
+        router.push(`/dashboard/workspace/${params.workspaceId}/projects/${projectId}/tasks/${task.id}`)
     }
     const priorityConfig = PRIORITY_CONFIG[task.priority]
 
@@ -35,28 +36,28 @@ export function KanbanTaskCard({ task }: KanbanTaskCardProps) {
     return (
         <div
             onClick={handleClick}
-            className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-3 cursor-pointer"
+            className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500/80 flex flex-col gap-2.5"
         >
             {/* Title */}
-            <p className="text-sm font-medium text-slate-800 dark:text-white leading-snug line-clamp-2">
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
                 {task.title}
             </p>
             {/* Description snippet */}
             {task.description && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {task.description}
                 </p>
             )}
             {/* Footer */}
-            <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/60 mt-0.5">
                 {/* Priority badge */}
-                <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${priorityConfig.className}`}>
+                <span className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-full shadow-2xs ${priorityConfig.className}`}>
                     <Flag className="size-3" />
                     {priorityConfig.label}
                 </span>
                 {/* Due date */}
                 {task.dueDate && (
-                    <span className={`inline-flex items-center gap-1 text-xs ${isOverdue ? "text-red-500" : "text-slate-400"}`}>
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-md ${isOverdue ? "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"}`}>
                         <Calendar className="size-3" />
                         {new Date(task.dueDate).toLocaleDateString("vi-VN")}
                     </span>

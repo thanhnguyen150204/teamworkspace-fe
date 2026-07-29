@@ -41,26 +41,29 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
     }
     if( isLoading || !kanban) {
         return (
-            <div className="flex gap-4 overflow-x-auto pb-4">
-                {COLUMNS.map((col) => (
-                    <div key={col} className="w-72 shrink-0 h-96 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
-                ))}
+            <div className="w-full flex justify-center py-4">
+                <div className="flex gap-5 overflow-x-auto pb-4 max-w-7xl w-full justify-center items-start">
+                    {COLUMNS.map((col) => (
+                        <div key={col} className="flex-1 min-w-[280px] max-w-[320px] shrink-0 h-96 rounded-2xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 animate-pulse shadow-xs" />
+                    ))}
+                </div>
             </div>
         )
     }
     return (
         <>
         <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="flex gap-4 overflow-x-auto pb-4">
-                {COLUMNS.map((status) => (
-                    <KanbanColumn
-                        key={status}
-                        status= {status}
-                        tasks={kanban[status] ?? []}
-                        onAddTask = {() => handleAddTask(status)}
-                    />
-                ))}
-
+            <div className="w-full flex justify-center py-4">
+                <div className="flex gap-5 overflow-x-auto pb-4 max-w-7xl w-full justify-center items-start px-2">
+                    {COLUMNS.map((status) => (
+                        <KanbanColumn
+                            key={status}
+                            status= {status}
+                            tasks={kanban[status] ?? []}
+                            onAddTask = {() => handleAddTask(status)}
+                        />
+                    ))}
+                </div>
             </div>
         </DragDropContext>
 

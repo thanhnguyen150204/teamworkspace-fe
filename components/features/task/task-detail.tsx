@@ -19,16 +19,16 @@ import {
 } from "lucide-react"
 
 const STATUS_CONFIG: Record<TaskStatus, { label: string; className: string }> = {
-  [TaskStatus.TODO]:        { label: "To Do",        className: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
-  [TaskStatus.IN_PROGRESS]: { label: "In Progress",  className: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" },
-  [TaskStatus.REVIEW]:      { label: "Review",       className: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300" },
-  [TaskStatus.DONE]:        { label: "Done",         className: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" },
+  [TaskStatus.TODO]:        { label: "TO DO",        className: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
+  [TaskStatus.IN_PROGRESS]: { label: "IN PROGRESS",  className: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" },
+  [TaskStatus.REVIEW]:      { label: "REVIEW",       className: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300" },
+  [TaskStatus.DONE]:        { label: "DONE",         className: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" },
 }
 
 const PRIORITY_CONFIG: Record<TaskPriority, { label: string; className: string }> = {
-  [TaskPriority.LOW]:    { label: "Low",    className: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" },
-  [TaskPriority.MEDIUM]: { label: "Medium", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300" },
-  [TaskPriority.HIGH]:   { label: "High",   className: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300" },
+  [TaskPriority.LOW]:    { label: "LOW",    className: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" },
+  [TaskPriority.MEDIUM]: { label: "MEDIUM", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300" },
+  [TaskPriority.HIGH]:   { label: "HIGH",   className: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300" },
 }
 
 interface TaskDetailProps {
