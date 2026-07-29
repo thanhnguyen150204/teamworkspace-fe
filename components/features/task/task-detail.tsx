@@ -6,6 +6,7 @@ import { Task, UpdateTaskDto } from "@/types/task"
 import { TaskStatus, TaskPriority } from "@/types/enum"
 import { taskApi } from "@/lib/api/tasks"
 import { CommentSection } from "./comment-section"
+import { AttachmentSection } from "./attachment-section"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -209,6 +210,12 @@ export function TaskDetail({ projectId, taskId, workspaceId }: TaskDetailProps) 
                 </p>
               )}
             </div>
+
+            {/* Divider */}
+            <div className="border-t border-slate-100 dark:border-slate-800" />
+
+            {/* Attachments */}
+            <AttachmentSection taskId={taskId} />
 
             {/* Divider */}
             <div className="border-t border-slate-100 dark:border-slate-800" />
