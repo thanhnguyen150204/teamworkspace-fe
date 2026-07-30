@@ -28,12 +28,13 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
     
     const handleDragEnd = (result: DropResult) => {
         const { destination, source, draggableId} = result
-        if(!destination) return 
-        if (destination.droppableId === source.droppableId) return
+        if (!destination) return
+        // Bỏ qua nếu thả đúng vị trí cũ
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return
 
-        const taskId = parseInt(draggableId) 
+        const taskId = parseInt(draggableId)
         const newStatus = destination.droppableId as TaskStatus
-        moveTask(projectId, taskId, newStatus)
+        moveTask(projectId, taskId, newStatus, source.index, destination.index)
     }
     const handleAddTask = (status: TaskStatus) => {
         setDefaultStatus(status)

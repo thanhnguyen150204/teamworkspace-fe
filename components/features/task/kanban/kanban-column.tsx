@@ -8,42 +8,42 @@ import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 
-interface KanbanColumnProps{
-    status: TaskStatus
-    tasks: Task[]
-    onAddTask: () => void 
+interface KanbanColumnProps {
+  status: TaskStatus
+  tasks: Task[]
+  onAddTask: () => void
 }
 
 const COLUMN_CONFIG: Record<TaskStatus, { label: string; headerClass: string; badgeClass: string }> = {
-    [TaskStatus.TODO]: {
-        label: "To Do",
-        headerClass: "bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700 text-white shadow-md shadow-cyan-600/20 border-none",
-        badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
-    },
-    [TaskStatus.IN_PROGRESS]: {
-        label: "In Progress",
-        headerClass: "bg-gradient-to-r from-sky-500 via-cyan-600 to-teal-600 text-white shadow-md shadow-cyan-600/20 border-none",
-        badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
-    },
-    [TaskStatus.REVIEW]: {
-        label: "Review",
-        headerClass: "bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-700 text-white shadow-md shadow-teal-600/20 border-none",
-        badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
-    },
-    [TaskStatus.DONE]: {
-        label: "Done",
-        headerClass: "bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 text-white shadow-md shadow-emerald-600/20 border-none",
-        badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
-    },
+  [TaskStatus.TODO]: {
+    label: "To Do",
+    headerClass: "bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700 text-white shadow-md shadow-cyan-600/20 border-none",
+    badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
+  },
+  [TaskStatus.IN_PROGRESS]: {
+    label: "In Progress",
+    headerClass: "bg-gradient-to-r from-sky-500 via-cyan-600 to-teal-600 text-white shadow-md shadow-cyan-600/20 border-none",
+    badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
+  },
+  [TaskStatus.REVIEW]: {
+    label: "Review",
+    headerClass: "bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-700 text-white shadow-md shadow-teal-600/20 border-none",
+    badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
+  },
+  [TaskStatus.DONE]: {
+    label: "Done",
+    headerClass: "bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 text-white shadow-md shadow-emerald-600/20 border-none",
+    badgeClass: "bg-white/20 text-white font-bold backdrop-blur-xs",
+  },
 }
 
-export function KanbanColumn({ status, tasks, onAddTask}: KanbanColumnProps){
-    const config = COLUMN_CONFIG[status]
+export function KanbanColumn({ status, tasks, onAddTask }: KanbanColumnProps) {
+  const config = COLUMN_CONFIG[status]
 
-    return(
-        <div className="flex-1 min-w-[280px] max-w-[320px] shrink-0 flex flex-col gap-3 rounded-2xl bg-sky-50/95 dark:bg-slate-900 border border-sky-200/80 dark:border-sky-900/40 p-3.5 shadow-md shadow-sky-900/5 dark:shadow-none">
+  return (
+    <div className="flex-1 min-w-[280px] max-w-[320px] shrink-0 flex flex-col gap-3 rounded-2xl bg-sky-50/95 dark:bg-slate-900 border border-sky-200/80 dark:border-sky-900/40 p-3.5 shadow-md shadow-sky-900/5 dark:shadow-none max-h-[calc(100vh-160px)]">
       {/* Column Header */}
-      <div className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl ${config.headerClass}`}>
+      <div className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl shrink-0 ${config.headerClass}`}>
         <div className="flex items-center gap-2.5">
           <span className="text-sm font-bold text-white tracking-tight">
             {config.label}
@@ -67,11 +67,10 @@ export function KanbanColumn({ status, tasks, onAddTask}: KanbanColumnProps){
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`flex flex-col gap-3 min-h-[340px] rounded-xl p-2 transition-colors ${
-              snapshot.isDraggingOver
-                ? "bg-sky-200/70 dark:bg-sky-950/60 border-2 border-dashed border-sky-500"
-                : "bg-blue-100/50 dark:bg-slate-950/40 border border-blue-200/50"
-            }`}
+            className={`flex-1 overflow-y-auto flex flex-col gap-3 min-h-[340px] rounded-xl p-2 transition-colors ${snapshot.isDraggingOver
+              ? "bg-sky-200/70 dark:bg-sky-950/60 border-2 border-dashed border-sky-500"
+              : "bg-blue-100/50 dark:bg-slate-950/40 border border-blue-200/50"
+              }`}
           >
             {tasks.map((task, index) => (
               <Draggable key={task.id} draggableId={String(task.id)} index={index}>

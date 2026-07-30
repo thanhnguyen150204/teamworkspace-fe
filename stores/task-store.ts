@@ -13,7 +13,7 @@ interface TaskState {
     fetchTask: (projectId: number, taskId: number) => Promise<void>;
     createTask: (projectId: number, data: CreateTaskDto) => Promise<Task>;
     updateTask: (projectId: number, taskId: number, data: UpdateTaskDto) => Promise<void>;
-    moveTask: (projectId: number, taskId: number, newStatus: TaskStatus) => Promise<void>;
+    moveTask: (projectId: number, taskId: number, newStatus: TaskStatus, sourceIndex: number, destinationIndex: number) => Promise<void>;
     deleteTask: (projectId: number, taskId: number) => Promise<void>;
     setActiveTask: (task: Task | null) => void;
 }
@@ -78,11 +78,11 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         }));
     },
 
-    moveTask: async (projectId, taskId, newStatus) => {
+    moveTask: async (projectId, taskId, newStatus, sourceIndex, destinationIndex) => {
         const kanban = get().kanban;
         if (!kanban) return;
 
-        // Find which column the task is in
+        // find task current
         let movedTask: Task | undefined;
         let oldStatus: TaskStatus | undefined;
         for (const status of Object.keys(kanban) as TaskStatus[]) {
@@ -93,22 +93,36 @@ export const useTaskStore = create<TaskState>((set, get) => ({
                 break;
             }
         }
-        if (!movedTask || !oldStatus || oldStatus === newStatus) return;
+        if (!movedTask || !oldStatus) return;
 
-        // Optimistic update — update UI before API response
+        const isSameColumn = oldStatus === newStatus;
         const updatedTask = { ...movedTask, status: newStatus };
+
+        if (isSameColumn) {
+            // Reorder in common column
+            const col = [...kanban[oldStatus]];
+            col.splice(sourceIndex, 1);          // delete old index
+            col.splice(destinationIndex, 0, updatedTask); // insert new index
+            set({ kanban: { ...kanban, [oldStatus]: col } });
+            // Don't call API because status is not changed
+            return;
+        }
+
+        // Optimistic update — insert new index
+        const newCol = [...kanban[newStatus]];
+        newCol.splice(destinationIndex, 0, updatedTask);
         set({
             kanban: {
                 ...kanban,
                 [oldStatus]: kanban[oldStatus].filter((t) => t.id !== taskId),
-                [newStatus]: [...kanban[newStatus], updatedTask],
+                [newStatus]: newCol,
             },
         });
 
         try {
             await taskApi.update(projectId, taskId, { status: newStatus });
         } catch {
-            // Rollback if API fails
+            // Rollback if API error
             set({ kanban });
         }
     },
