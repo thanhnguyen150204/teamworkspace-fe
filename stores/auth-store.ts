@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { User } from '@/types/user';
 import { usersApi } from '@/lib/api/users';
 import { setCookie, deleteCookie } from '@/lib/cookies';
+import { useWorkspaceStore } from './workspace-store';
+import { useTaskStore } from './task-store';
 
 interface AuthState {
   user: User | null;
@@ -29,6 +31,21 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem('refresh_token');
     deleteCookie('access_token');
     set({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
+    useWorkspaceStore.setState({
+      workspaces: [],
+      activeWorkspace: null,
+      projects: [],
+      activeProject: null,
+      myRole: null,
+      loadedProjectsWorkspaceId: null,
+      isLoading: false,
+    });
+    useTaskStore.setState({
+      tasks: [],
+      kanban: null,
+      activeTask: null,
+      isLoading: false,
+    })
   },
   fetchMe: async () => {
     set({ isLoading: true });

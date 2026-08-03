@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
 import { authApi } from "@/lib/api/auth"
 import { toast } from "sonner"
+import { useWorkspaceStore } from "@/stores/workspace-store"
 
 export function LoginForm({
   className,
@@ -24,6 +25,7 @@ export function LoginForm({
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false); 
   const [error, setError] = useState<string | null>(null);
+  const fetchWorkspaces = useWorkspaceStore(state => state.fetchWorkspaces);
 
   const handleSubmit = async (e: React.FormEvent) =>{
     e.preventDefault();
@@ -32,6 +34,7 @@ export function LoginForm({
     try{
         const res = await authApi.login({email, password});
         setAuth(res.user, res.access_token, res.refresh_token);
+        await fetchWorkspaces(true);
         toast.success('Login successfully!')
         router.push('/dashboard');
     } catch (err: any) {
