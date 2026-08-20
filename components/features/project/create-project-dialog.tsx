@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -47,50 +48,52 @@ export function CreateProjectDialog({ workspaceId, open, onOpenChange, onSuccess
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <form onSubmit={handleSubmit}>
-        <DialogHeader>
-          <DialogTitle>Tạo Dự Án Mới</DialogTitle>
-          <DialogDescription>
-            Tạo dự án mới trong Workspace để quản lý danh sách công việc và bảng Kanban.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-lg">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Tạo Dự Án Mới</DialogTitle>
+            <DialogDescription>
+              Tạo dự án mới trong Workspace để quản lý danh sách công việc và bảng Kanban.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="grid gap-4 py-2">
-          <div className="space-y-1.5">
-            <label htmlFor="pj-name" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Tên Dự Án *
-            </label>
-            <Input
-              id="pj-name"
-              placeholder="Ví dụ: Redesign Landing Page, Mobile App v1.0..."
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+          <div className="grid gap-4 py-2">
+            <div className="space-y-1.5">
+              <label htmlFor="pj-name" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Tên Dự Án *
+              </label>
+              <Input
+                id="pj-name"
+                placeholder="Ví dụ: Redesign Landing Page, Mobile App v1.0..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="pj-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Mô tả dự án
+              </label>
+              <Textarea
+                id="pj-desc"
+                placeholder="Mô tả ngắn gọn về mục tiêu của dự án..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
           </div>
-          <div className="space-y-1.5">
-            <label htmlFor="pj-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Mô tả dự án
-            </label>
-            <Textarea
-              id="pj-desc"
-              placeholder="Mô tả ngắn gọn về mục tiêu của dự án..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-            />
-          </div>
-        </div>
 
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Hủy
-          </Button>
-          <Button type="submit" disabled={loading}>
-            {loading ? "Đang tạo..." : "Tạo Dự Án"}
-          </Button>
-        </DialogFooter>
-      </form>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Hủy
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Đang tạo..." : "Tạo Dự Án"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

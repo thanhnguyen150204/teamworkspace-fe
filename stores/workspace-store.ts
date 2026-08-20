@@ -39,9 +39,26 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         set({ isLoading: true });
         try {
             const data = await workspaceApi.getAll();
-            set({ workspaces: data, isLoading: false });
-            if (data.length > 0 && !get().activeWorkspace) {
-                await get().setActiveWorkspace(data[0]);
+            const currentActive = get().activeWorkspace;
+            const activeStillExists = currentActive ? data.some((w) => w.id === currentActive.id) : false;
+
+            if (data.length > 0) {
+                const nextActive = activeStillExists ? currentActive : data[0];
+                set({ workspaces: data, activeWorkspace: nextActive, isLoading: false });
+                if (!activeStillExists) {
+                    await get().setActiveWorkspace(data[0]);
+                }
+            } else {
+                set({
+                    workspaces: [],
+                    activeWorkspace: null,
+                    projects: [],
+                    activeProject: null,
+                    myRole: null,
+                    loadedProjectsWorkspaceId: null,
+                    loadedRoleWorkspaceId: null,
+                    isLoading: false,
+                });
             }
         } catch {
             set({ isLoading: false });
@@ -78,14 +95,22 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
             return;
         }
         try {
-            const members = await memberApi.getAll(workspaceId) as any[];
-            const user = useAuthStore.getState().user;
-            if(!user){
+            let user = useAuthStore.getState().user;
+
+            // If user hasn't loaded yet, try fetching it first
+            if (!user) {
+                await useAuthStore.getState().fetchMe();
+                user = useAuthStore.getState().user;
+            }
+
+            if (!user) {
                 set({ myRole: null, loadedRoleWorkspaceId: null });
                 return;
             }
+
+            const members = await memberApi.getAll(workspaceId) as any[];
             const myMembership = members.find(
-                (m: any) => m.userId === user.id
+                (m: any) => m.userId === user!.id
             );
             set({ 
                 myRole: (myMembership?.role as WorkspaceRole) || null,
@@ -96,5 +121,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
             set({ myRole: null, loadedRoleWorkspaceId: null });
         }
     },
+
 
 }));

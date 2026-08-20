@@ -55,16 +55,18 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
     createTask: async (projectId, data) => {
         const newTask = await taskApi.create(projectId, data);
-        // Update kanban if using kanban view
         const kanban = get().kanban;
         if (kanban) {
             const status = newTask.status;
-            set({
-                kanban: {
-                    ...kanban,
-                    [status]: [...kanban[status], newTask],
-                },
-            });
+            const col = kanban[status] ?? [];
+            if (!col.some((t) => t.id === newTask.id)) {
+                set({
+                    kanban: {
+                        ...kanban,
+                        [status]: [...col, newTask],
+                    },
+                });
+            }
         }
         return newTask;
     },

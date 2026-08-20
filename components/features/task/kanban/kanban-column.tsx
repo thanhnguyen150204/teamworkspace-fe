@@ -40,6 +40,11 @@ const COLUMN_CONFIG: Record<TaskStatus, { label: string; headerClass: string; ba
 export function KanbanColumn({ status, tasks, onAddTask }: KanbanColumnProps) {
   const config = COLUMN_CONFIG[status]
 
+  // Filter unique tasks by ID to guarantee React key uniqueness
+  const uniqueTasks = Array.from(
+    new Map(tasks.map((t) => [t.id, t])).values()
+  )
+
   return (
     <div className="flex-1 min-w-[280px] max-w-[320px] shrink-0 flex flex-col gap-3 rounded-2xl bg-sky-50/95 dark:bg-slate-900 border border-sky-200/80 dark:border-sky-900/40 p-3.5 shadow-md shadow-sky-900/5 dark:shadow-none max-h-[calc(100vh-160px)]">
       {/* Column Header */}
@@ -72,7 +77,7 @@ export function KanbanColumn({ status, tasks, onAddTask }: KanbanColumnProps) {
               : "bg-blue-100/50 dark:bg-slate-950/40 border border-blue-200/50"
               }`}
           >
-            {tasks.map((task, index) => (
+            {uniqueTasks.map((task, index) => (
               <Draggable key={task.id} draggableId={String(task.id)} index={index}>
                 {(provided, snapshot) => (
                   <div
@@ -89,7 +94,7 @@ export function KanbanColumn({ status, tasks, onAddTask }: KanbanColumnProps) {
             ))}
             {provided.placeholder}
 
-            {tasks.length === 0 && (
+            {uniqueTasks.length === 0 && (
               <div className="flex flex-col items-center justify-center h-28 rounded-xl border-2 border-dashed border-sky-300/70 dark:border-slate-800 bg-sky-50/70 dark:bg-slate-900/40 text-slate-400">
                 <span className="text-xs font-semibold text-sky-600 dark:text-sky-400">Kéo task vào đây</span>
               </div>

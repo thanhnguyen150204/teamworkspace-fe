@@ -17,21 +17,33 @@ interface WorkspaceSettingsProps {
 
 export function WorkspaceSettings({ workspaceId }: WorkspaceSettingsProps) {
   const router = useRouter()
-  const { activeWorkspace, myRole, fetchWorkspaces } = useWorkspaceStore()
+  const { activeWorkspace, myRole, fetchWorkspaces, fetchMyRole } = useWorkspaceStore()
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [confirmName, setConfirmName] = useState("")
+  const [targetWsName, setTargetWsName] = useState("")
 
   const isOwner = myRole === WorkspaceRole.OWNER
 
+  // Ensure role and workspace info are loaded even on direct page reload
   useEffect(() => {
-    if (activeWorkspace) {
+    if (!workspaceId) return
+    fetchMyRole(workspaceId)
+
+    if (!activeWorkspace || activeWorkspace.id !== workspaceId) {
+      workspaceApi.getOne(workspaceId).then((ws) => {
+        setName(ws.name)
+        setDescription(ws.description ?? "")
+        setTargetWsName(ws.name)
+      }).catch(() => {})
+    } else {
       setName(activeWorkspace.name)
       setDescription(activeWorkspace.description ?? "")
+      setTargetWsName(activeWorkspace.name)
     }
-  }, [activeWorkspace])
+  }, [workspaceId, activeWorkspace, fetchMyRole])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,7 +51,7 @@ export function WorkspaceSettings({ workspaceId }: WorkspaceSettingsProps) {
     setSaving(true)
     try {
       await workspaceApi.update(workspaceId, { name: name.trim(), description: description || undefined })
-      await fetchWorkspaces()
+      await fetchWorkspaces(true)
       toast.success("Đã cập nhật workspace")
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Không thể cập nhật workspace")
@@ -49,15 +61,15 @@ export function WorkspaceSettings({ workspaceId }: WorkspaceSettingsProps) {
   }
 
   const handleDelete = async () => {
-    if (confirmName !== activeWorkspace?.name) {
-      toast.error("Tên workspace không khớp")
+    if (confirmName !== targetWsName) {
+      toast.error("Tên workspace nhập vào không khớp với tên hiện tại")
       return
     }
     setDeleting(true)
     try {
       await workspaceApi.delete(workspaceId)
-      toast.success("Đã xóa workspace")
-      await fetchWorkspaces()
+      toast.success("Đã xóa vĩnh viễn workspace thành công!")
+      await fetchWorkspaces(true)
       router.push("/dashboard")
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Không thể xóa workspace")
@@ -107,35 +119,35 @@ export function WorkspaceSettings({ workspaceId }: WorkspaceSettingsProps) {
         </form>
       </div>
 
-      {/* Danger Zone – chỉ OWNER */}
+      {/* Danger Zone – dành cho OWNER */}
       {isOwner && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-red-200 dark:border-red-900/50 overflow-hidden">
-          <div className="px-6 py-4 border-b border-red-100 dark:border-red-900/30 flex items-center gap-2">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-red-200 dark:border-red-900/50 overflow-hidden shadow-xs">
+          <div className="px-6 py-4 border-b border-red-100 dark:border-red-900/30 flex items-center gap-2 bg-red-50/50 dark:bg-red-950/20">
             <AlertTriangle className="size-4 text-red-500" />
-            <h3 className="text-sm font-semibold text-red-600 dark:text-red-400">Vùng nguy hiểm</h3>
+            <h3 className="text-sm font-semibold text-red-600 dark:text-red-400">Vùng nguy hiểm (Chỉ Owner)</h3>
           </div>
           <div className="p-6 space-y-4">
             <div>
-              <p className="text-sm font-semibold text-slate-800 dark:text-white">Xóa workspace</p>
-              <p className="text-xs text-slate-500 mt-1">
-                Thao tác này sẽ xóa vĩnh viễn workspace cùng toàn bộ projects và tasks. Không thể hoàn tác.
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">Xóa Workspace này</p>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Hành động này sẽ **xóa vĩnh viễn** workspace <span className="font-bold text-slate-700 dark:text-slate-200">{targetWsName}</span> cùng tất cả dự án, danh sách task và dữ liệu liên quan. Không thể hoàn tác.
               </p>
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Nhập tên workspace để xác nhận: <span className="text-red-500 font-mono">{activeWorkspace?.name}</span>
+                Vui lòng nhập tên workspace để xác nhận: <span className="text-red-600 font-bold font-mono">{targetWsName}</span>
               </label>
               <Input
                 value={confirmName}
                 onChange={e => setConfirmName(e.target.value)}
-                placeholder="Nhập tên workspace..."
+                placeholder="Nhập tên workspace để xác nhận..."
                 className="border-red-200 dark:border-red-900/50 focus-visible:ring-red-500"
               />
             </div>
             <Button
               variant="destructive"
               onClick={handleDelete}
-              disabled={deleting || confirmName !== activeWorkspace?.name}
+              disabled={deleting || confirmName !== targetWsName}
               className="gap-2"
             >
               {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}

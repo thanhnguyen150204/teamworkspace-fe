@@ -68,8 +68,14 @@ apiClient.interceptors.response.use(
             );
 
             const newAccessToken = response.data.data.access_token;
+            const newRefreshToken = response.data.data.refresh_token;
+
             localStorage.setItem("access_token", newAccessToken);
             setCookie("access_token", newAccessToken);
+            if (newRefreshToken) {
+                localStorage.setItem("refresh_token", newRefreshToken);
+            }
+
             processQueue(null, newAccessToken);
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 

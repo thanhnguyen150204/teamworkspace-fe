@@ -28,7 +28,7 @@ export function CommentSection({ taskId }: CommentSectionProps) {
       const data = await commentApi.getAll(taskId) as any as Comment[]
       setComments(data)
     } catch {
-      toast.error("Không thể tải comments")
+      toast.error("Failed to load comments")
     } finally {
       setLoading(false)
     }
@@ -37,6 +37,24 @@ export function CommentSection({ taskId }: CommentSectionProps) {
   useEffect(() => {
     fetchComments()
   }, [taskId])
+
+  // Listen for real-time comment_added events from other users via WebSocket
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const comment = (e as CustomEvent<Comment>).detail
+      // Only append if it belongs to this task and was sent by someone else
+      // (our own comments are already appended optimistically in handleAdd)
+      if (comment.taskId === taskId && comment.userId !== user?.id) {
+        setComments(prev => {
+          // Avoid duplicates
+          if (prev.some(c => c.id === comment.id)) return prev
+          return [...prev, comment]
+        })
+      }
+    }
+    window.addEventListener('ws:comment_added', handler)
+    return () => window.removeEventListener('ws:comment_added', handler)
+  }, [taskId, user?.id])
 
   const handleAdd = async () => {
     if (!newContent.trim()) return

@@ -9,4 +9,6 @@ export const memberApi = {
         client.patch<any, Membership>(`/workspaces/${workspaceId}/members/${userId}`, data),
     remove: (workspaceId: number, userId: number) =>
         client.delete<any, void>(`/workspaces/${workspaceId}/members/${userId}`),
+    leave: (workspaceId: number) =>
+        client.post<any, void>(`/workspaces/${workspaceId}/members/leave`),
 };

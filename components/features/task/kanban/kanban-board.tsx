@@ -4,7 +4,7 @@ import { useTaskStore } from "@/stores/task-store"
 import { TaskStatus } from "@/types"
 import { DragDropContext, DropResult } from "@hello-pangea/dnd"
 import { useEffect, useState } from "react"
-import {KanbanColumn} from "./kanban-column"
+import { KanbanColumn } from "./kanban-column"
 import { CreateTaskDialog } from "./create-task-dialog"
 
 interface KanbanBoardProps {
@@ -18,29 +18,38 @@ const COLUMNS: TaskStatus[] = [
 ]
 
 export function KanbanBoard({ projectId }: KanbanBoardProps) {
-    const {kanban, fetchKanban, moveTask, isLoading} = useTaskStore()
+    const { kanban, fetchKanban, moveTask, isLoading } = useTaskStore()
     const [openCreate, setOpenCreate] = useState(false)
     const [defaultStatus, setDefaultStatus] = useState<TaskStatus>(TaskStatus.TODO)
+    const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
-        fetchKanban(projectId)
+        setIsMounted(true)
+    }, [])
+
+    useEffect(() => {
+        if (projectId) {
+            fetchKanban(projectId)
+        }
     }, [projectId, fetchKanban])
-    
+
     const handleDragEnd = (result: DropResult) => {
-        const { destination, source, draggableId} = result
+        const { destination, source, draggableId } = result
         if (!destination) return
-        // Bỏ qua nếu thả đúng vị trí cũ
+        // Ignore if dropped in same position
         if (destination.droppableId === source.droppableId && destination.index === source.index) return
 
         const taskId = parseInt(draggableId)
         const newStatus = destination.droppableId as TaskStatus
         moveTask(projectId, taskId, newStatus, source.index, destination.index)
     }
+
     const handleAddTask = (status: TaskStatus) => {
         setDefaultStatus(status)
         setOpenCreate(true)
     }
-    if( isLoading || !kanban) {
+
+    if (!isMounted || isLoading || !kanban) {
         return (
             <div className="w-full flex justify-center py-4">
                 <div className="flex gap-5 overflow-x-auto pb-4 max-w-7xl w-full justify-center items-start">
@@ -51,30 +60,31 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
             </div>
         )
     }
+
     return (
         <>
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="w-full flex justify-center py-4">
-                <div className="flex gap-5 overflow-x-auto pb-4 max-w-7xl w-full justify-center items-start px-2">
-                    {COLUMNS.map((status) => (
-                        <KanbanColumn
-                            key={status}
-                            status= {status}
-                            tasks={kanban[status] ?? []}
-                            onAddTask = {() => handleAddTask(status)}
-                        />
-                    ))}
+            <DragDropContext onDragEnd={handleDragEnd}>
+                <div className="w-full flex justify-center py-4">
+                    <div className="flex gap-5 overflow-x-auto pb-4 max-w-7xl w-full justify-center items-start px-2">
+                        {COLUMNS.map((status) => (
+                            <KanbanColumn
+                                key={status}
+                                status={status}
+                                tasks={kanban[status] ?? []}
+                                onAddTask={() => handleAddTask(status)}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
-        </DragDropContext>
+            </DragDropContext>
 
-        <CreateTaskDialog
-            projectId= {projectId}
-            defaultStatus= {defaultStatus}
-            open={openCreate}
-            onOpenChange = {setOpenCreate}
-            onSuccess={() => fetchKanban(projectId)}
-        />
+            <CreateTaskDialog
+                projectId={projectId}
+                defaultStatus={defaultStatus}
+                open={openCreate}
+                onOpenChange={setOpenCreate}
+                onSuccess={() => fetchKanban(projectId)}
+            />
         </>
     )
 }

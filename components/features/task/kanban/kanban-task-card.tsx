@@ -1,6 +1,10 @@
+'use client'
+
 import { Task, TaskPriority } from "@/types";
-import { Calendar, Flag } from "lucide-react";
+import { Calendar, Flag, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { useTaskStore } from "@/stores/task-store";
+import { toast } from "sonner";
 
 interface KanbanTaskCardProps {
     task: Task
@@ -24,30 +28,54 @@ const PRIORITY_CONFIG: Record<TaskPriority, { label: string; className: string }
 export function KanbanTaskCard({ task }: KanbanTaskCardProps) {
     const router = useRouter()
     const params = useParams()
+    const { deleteTask } = useTaskStore()
+
+    const projectId = task.projectId || Number(params.projectId)
 
     const handleClick = () => {
-        const projectId = task.projectId || params.projectId
         router.push(`/dashboard/workspace/${params.workspaceId}/projects/${projectId}/tasks/${task.id}`)
     }
-    const priorityConfig = PRIORITY_CONFIG[task.priority]
 
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (!confirm(`Bạn có chắc muốn xóa task "${task.title}"?`)) return
+        try {
+            await deleteTask(projectId, task.id)
+            toast.success("Đã xóa task thành công")
+        } catch {
+            toast.error("Không thể xóa task")
+        }
+    }
+
+    const priorityConfig = PRIORITY_CONFIG[task.priority]
     const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "DONE"
 
     return (
         <div
             onClick={handleClick}
-            className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500/80 flex flex-col gap-2.5"
+            className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500/80 flex flex-col gap-2.5 relative"
         >
-            {/* Title */}
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
-                {task.title}
-            </p>
+            {/* Header: Title + Delete button */}
+            <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
+                    {task.title}
+                </p>
+                <button
+                    onClick={handleDelete}
+                    title="Xóa task"
+                    className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded transition-all shrink-0"
+                >
+                    <Trash2 className="size-3.5" />
+                </button>
+            </div>
+
             {/* Description snippet */}
             {task.description && (
                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {task.description}
                 </p>
             )}
+
             {/* Footer */}
             <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/60 mt-0.5">
                 {/* Priority badge */}

@@ -51,7 +51,8 @@ export default function SettingsPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   // Password Change
-  const [password, setPassword] = useState("")
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
   const [savingPassword, setSavingPassword] = useState(false)
 
   // User Management
@@ -95,7 +96,7 @@ export default function SettingsPage() {
 
     setSavingProfile(true)
     try {
-      await usersApi.update(user.id, { fullName, email })
+      await usersApi.updateProfile({ fullName })
       await fetchMe()
       toast.success("Cập nhật thông tin thành công")
     } catch {
@@ -107,15 +108,17 @@ export default function SettingsPage() {
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !password.trim()) return
+    if (!user || !currentPassword.trim() || !newPassword.trim()) return
 
     setSavingPassword(true)
     try {
-      await usersApi.update(user.id, { password })
-      setPassword("")
-      toast.success("Đổi mật khẩu thành công")
-    } catch {
-      toast.error("Không thể đổi mật khẩu")
+      await usersApi.changePassword({ currentPassword, newPassword })
+      setCurrentPassword("")
+      setNewPassword("")
+      toast.success("Đổi mật khẩu thành công. Vui lòng đăng nhập lại nếu cần.")
+    } catch (error: any) {
+      const msg = error.response?.data?.message || "Không thể đổi mật khẩu"
+      toast.error(msg)
     } finally {
       setSavingPassword(false)
     }
@@ -288,19 +291,30 @@ export default function SettingsPage() {
             </h3>
 
             <div className="space-y-1.5">
+              <Label className="text-foreground font-medium">Mật khẩu hiện tại</Label>
+              <Input
+                type="password"
+                placeholder="Nhập mật khẩu hiện tại..."
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="bg-background border-input text-foreground"
+              />
+            </div>
+
+            <div className="space-y-1.5">
               <Label className="text-foreground font-medium">Mật khẩu mới</Label>
               <Input
                 type="password"
-                placeholder="Nhập mật khẩu mới..."
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..."
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="bg-background border-input text-foreground"
               />
             </div>
 
             <Button
               type="submit"
-              disabled={savingPassword || !password.trim()}
+              disabled={savingPassword || !currentPassword.trim() || !newPassword.trim()}
               className="gap-2 bg-teal-600 hover:bg-teal-700 text-white cursor-pointer shadow-xs"
             >
               {savingPassword ? <Loader2 className="size-4 animate-spin" /> : <Shield className="size-4" />}

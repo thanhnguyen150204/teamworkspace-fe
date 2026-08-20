@@ -10,8 +10,9 @@ import { Input } from "@/components/ui/input"
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
-import { Plus, Search, Calendar, Flag, ChevronRight, Loader2 } from "lucide-react"
+import { Plus, Search, Calendar, Flag, ChevronRight, Loader2, Trash2 } from "lucide-react"
 import { CreateTaskDialog } from "./kanban/create-task-dialog"
+import { toast } from "sonner"
 
 const STATUS_CONFIG: Record<TaskStatus, { label: string; className: string }> = {
   [TaskStatus.TODO]:        { label: "To Do",        className: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400" },
@@ -33,7 +34,7 @@ interface TaskListProps {
 
 export function TaskList({ projectId, workspaceId }: TaskListProps) {
   const router = useRouter()
-  const { tasks, fetchTasks, updateTask, isLoading } = useTaskStore()
+  const { tasks, fetchTasks, updateTask, deleteTask, isLoading } = useTaskStore()
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("ALL")
   const [priorityFilter, setPriorityFilter] = useState<string>("ALL")
@@ -178,8 +179,26 @@ export function TaskList({ projectId, workspaceId }: TaskListProps) {
                         <span className="text-xs text-slate-300">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
-                      <ChevronRight className="size-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation()
+                            if (!confirm(`Bạn có chắc muốn xóa task "${task.title}"?`)) return
+                            try {
+                              await deleteTask(projectId, task.id)
+                              toast.success("Đã xóa task")
+                            } catch {
+                              toast.error("Không thể xóa task")
+                            }
+                          }}
+                          title="Xóa task"
+                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded transition-colors"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                        <ChevronRight className="size-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                      </div>
                     </td>
                   </tr>
                 )

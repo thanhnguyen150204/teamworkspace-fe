@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Dialog,
+  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -74,92 +75,94 @@ export function CreateTaskDialog({
     }
     return (
      <Dialog open={open} onOpenChange={onOpenChange}>
-      <form onSubmit={handleSubmit}>
-        <DialogHeader>
-          <DialogTitle>Tạo Task Mới</DialogTitle>
-          <DialogDescription>Thêm task vào kanban board của dự án.</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          {/* Title */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-              Tên task *
-            </label>
-            <Input
-              placeholder="Ví dụ: Thiết kế trang chủ..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-          {/* Description */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-              Mô tả
-            </label>
-            <Textarea
-              placeholder="Mô tả chi tiết task..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {/* Status */}
+      <DialogContent className="sm:max-w-lg">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Tạo Task Mới</DialogTitle>
+            <DialogDescription>Thêm task vào kanban board của dự án.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {/* Title */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                Trạng thái
+                Tên task *
               </label>
-              <Select value={status} onValueChange={(v) => setStatus(v as TaskStatus)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={TaskStatus.TODO}>TODO</SelectItem>
-                  <SelectItem value={TaskStatus.IN_PROGRESS}>IN PROGRESS</SelectItem>
-                  <SelectItem value={TaskStatus.REVIEW}>REVIEW</SelectItem>
-                  <SelectItem value={TaskStatus.DONE}>DONE</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                placeholder="Ví dụ: Thiết kế trang chủ..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
             </div>
-            {/* Priority */}
+            {/* Description */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                Độ ưu tiên
+                Mô tả
               </label>
-              <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={TaskPriority.LOW}>🟢 LOW</SelectItem>
-                  <SelectItem value={TaskPriority.MEDIUM}>🟡 MEDIUM</SelectItem>
-                  <SelectItem value={TaskPriority.HIGH}>🔴 HIGH</SelectItem>
-                </SelectContent>
-              </Select>
+              <Textarea
+                placeholder="Mô tả chi tiết task..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Status */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                  Trạng thái
+                </label>
+                <Select value={status} onValueChange={(v) => setStatus(v as TaskStatus)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={TaskStatus.TODO}>TODO</SelectItem>
+                    <SelectItem value={TaskStatus.IN_PROGRESS}>IN PROGRESS</SelectItem>
+                    <SelectItem value={TaskStatus.REVIEW}>REVIEW</SelectItem>
+                    <SelectItem value={TaskStatus.DONE}>DONE</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Priority */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                  Độ ưu tiên
+                </label>
+                <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={TaskPriority.LOW}>🟢 LOW</SelectItem>
+                    <SelectItem value={TaskPriority.MEDIUM}>🟡 MEDIUM</SelectItem>
+                    <SelectItem value={TaskPriority.HIGH}>🔴 HIGH</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            {/* Due Date */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                Ngày hết hạn
+              </label>
+              <Input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
             </div>
           </div>
-          {/* Due Date */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-              Ngày hết hạn
-            </label>
-            <Input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Hủy
-          </Button>
-          <Button type="submit" disabled={loading || !title.trim()}>
-            {loading ? "Đang tạo..." : "Tạo Task"}
-          </Button>
-        </DialogFooter>
-      </form>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Hủy
+            </Button>
+            <Button type="submit" disabled={loading || !title.trim()}>
+              {loading ? "Đang tạo..." : "Tạo Task"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

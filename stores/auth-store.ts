@@ -4,6 +4,7 @@ import { usersApi } from '@/lib/api/users';
 import { setCookie, deleteCookie } from '@/lib/cookies';
 import { useWorkspaceStore } from './workspace-store';
 import { useTaskStore } from './task-store';
+import { disconnectSocket } from '@/lib/socket';
 
 interface AuthState {
   user: User | null;
@@ -31,6 +32,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem('refresh_token');
     deleteCookie('access_token');
     set({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
+    // Disconnect WebSocket so the stale JWT is not reused on next login
+    disconnectSocket();
     useWorkspaceStore.setState({
       workspaces: [],
       activeWorkspace: null,
@@ -45,7 +48,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       kanban: null,
       activeTask: null,
       isLoading: false,
-    })
+    });
   },
   fetchMe: async () => {
     set({ isLoading: true });

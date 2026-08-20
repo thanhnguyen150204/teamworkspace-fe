@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Dialog,
+  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -42,7 +43,8 @@ export function InviteMemberDialog({ workspaceId, open, onOpenChange, onSuccess 
       onOpenChange(false)
       onSuccess()
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Không thể mời thành viên")
+      const msg = err.response?.data?.message
+      toast.error(Array.isArray(msg) ? msg[0] : msg || "Không thể mời thành viên")
     } finally {
       setLoading(false)
     }
@@ -50,57 +52,59 @@ export function InviteMemberDialog({ workspaceId, open, onOpenChange, onSuccess 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <form onSubmit={handleSubmit}>
-        <DialogHeader>
-          <DialogTitle>Mời Thành Viên</DialogTitle>
-          <DialogDescription>
-            Nhập email người dùng để mời vào workspace.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Mời Thành Viên</DialogTitle>
+            <DialogDescription>
+              Nhập email người dùng để mời vào workspace.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-              Email *
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
-              <Input
-                type="email"
-                placeholder="example@email.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="pl-9"
-                required
-              />
+          <div className="grid gap-4 py-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                Email *
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+                <Input
+                  type="email"
+                  placeholder="example@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="pl-9"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                Vai trò
+              </label>
+              <Select value={role} onValueChange={v => setRole(v as WorkspaceRole)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={WorkspaceRole.ADMIN}>Admin – Quản lý workspace</SelectItem>
+                  <SelectItem value={WorkspaceRole.MEMBER}>Member – Thành viên thường</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-              Vai trò
-            </label>
-            <Select value={role} onValueChange={v => setRole(v as WorkspaceRole)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={WorkspaceRole.ADMIN}>Admin – Quản lý workspace</SelectItem>
-                <SelectItem value={WorkspaceRole.MEMBER}>Member – Thành viên thường</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Hủy
-          </Button>
-          <Button type="submit" disabled={loading || !email.trim()}>
-            {loading ? "Đang mời..." : "Gửi lời mời"}
-          </Button>
-        </DialogFooter>
-      </form>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Hủy
+            </Button>
+            <Button type="submit" disabled={loading || !email.trim()}>
+              {loading ? "Đang mời..." : "Gửi lời mời"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

@@ -7,7 +7,6 @@ import { Project } from "@/types/project"
 import { ProjectDetailHeader } from "@/components/features/project/project-detail-header"
 import { Loader2, KanbanSquare, ListTodo } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
 export default function ProjectPage() {
   const params = useParams()
   const router = useRouter()

@@ -35,9 +35,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const params = useParams();
   const {user} = useAuthStore();
-  const { workspaces, activeWorkspace, projects, fetchWorkspaces, setActiveWorkspace} = useWorkspaceStore()
-  const { canAccessSettings} = usePermission()
-  const workspaceId  = params?.workspaceId ? Number(params.workspaceId) : activeWorkspace?.id
+  const { workspaces, activeWorkspace, projects, fetchWorkspaces, setActiveWorkspace, fetchMyRole } = useWorkspaceStore()
+  const { canAccessSettings } = usePermission()
 
   React.useEffect(() => {
     fetchWorkspaces()
@@ -58,6 +57,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentWorkspaceId = params?.workspaceId
     ? Number(params.workspaceId)
     : activeWorkspace?.id
+
+  React.useEffect(() => {
+    if (currentWorkspaceId) {
+      fetchMyRole(currentWorkspaceId)
+    }
+  }, [currentWorkspaceId, fetchMyRole])
 
   const navMain = [
     {
